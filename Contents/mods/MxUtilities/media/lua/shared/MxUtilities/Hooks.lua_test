@@ -1,3 +1,11 @@
+-- Zomboid compatbility layer
+
+unpack = unpack or table.unpack
+
+isDebugEnabled = function ()
+  return false
+end
+
 -- Since Im running lua54.exe in this folder, I don't need to respect the zomboid require rules
 local Hooks = require("Hooks") -- Import the Hooks utility
 
@@ -6,7 +14,7 @@ local function myPreHookFunction(...)
     print("Pre-hook function")
 end
 
-local function myPostHookFunction(result)
+local function myPostHookFunction(...)
     print("Post-hook function")
 end
 
@@ -17,6 +25,9 @@ function TestModule:testFunction()
     return "Original function result"
 end
 
+print("-- Start Hooks Test --")
+print("")
+
 -- Apply a pre-hook and a post-hook to TestModule:testFunction()
 Hooks:applyPreHook(TestModule, "testFunction", myPreHookFunction)
 Hooks:applyPostHook(TestModule, "testFunction", myPostHookFunction)
@@ -25,13 +36,18 @@ Hooks:applyPostHook(TestModule, "testFunction", myPostHookFunction)
 local result = TestModule:testFunction()
 print("Result:", result)
 
+print("Toggle Hooks OFF")
+print("")
 -- Toggle Hooks off
 Hooks:toggleHooks(false)
 
 -- Call TestModule:testFunction() after Hooks have been toggled off
 TestModule:testFunction()
 
+print("Toggle Hooks ON")
+print("")
 -- Toggle Hooks off
 Hooks:toggleHooks(true)
 
+-- Call TestModule:testFunction() after Hooks have been toggled on again
 TestModule:testFunction()
