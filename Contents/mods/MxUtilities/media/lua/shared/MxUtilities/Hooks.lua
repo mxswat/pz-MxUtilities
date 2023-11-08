@@ -1,18 +1,6 @@
 ---@class Hooks
 local Hooks = {}
 
-function Hooks.print(...)
-  if not isDebugEnabled() then
-    return
-  end
-  local arguments = { ... }
-  local printResult = ''
-  for _, v in ipairs(arguments) do
-    printResult = printResult .. tostring(v and v or 'nil') .. " "
-  end
-  print('[MxUtilities] ' .. printResult)
-end
-
 ---@type table<string, table<string, function>> The registry for hooked functions.
 Hooks.hookRegistry = {}
 
@@ -52,7 +40,6 @@ function Hooks:applyPostHook(targetTable, targetFunctionName, postHookFunction)
   targetTable[targetFunctionName] = function(...)
     local lastResult = { originalFunction(...) }     -- Call the original function and store its result
     self.lastResult = lastResult                     -- Store the last result for later access
-    self.print('Post Hook Called for ' .. targetFunctionName)
     if self.isActive then
       local newResult = postHookFunction(...)       -- Call the post-hook function with the original arguments
       return newResult or unpack(lastResult)        -- Return the modified result or the original result if nil
