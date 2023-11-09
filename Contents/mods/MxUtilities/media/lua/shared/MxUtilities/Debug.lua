@@ -1,27 +1,5 @@
 local Debug = {}
 
----@param modName string
-function Debug:new(modName)
-  local obj = {
-    modName = modName or "DefaultModName"
-  }
-  setmetatable(obj, self)
-  self.__index = self
-  return obj
-end
-
-function Debug:print(...)
-  if not isDebugEnabled() then
-    return
-  end
-  local arguments = { ... }
-  local printResult = ''
-  for _, v in ipairs(arguments) do
-    printResult = printResult .. tostring(v and v or 'nil') .. " "
-  end
-  print(self.modName .. ': ' .. printResult)
-end
-
 ---@param node table|any
 function Debug:printTable(node)
   local cache, stack, output = {}, {}, {}
@@ -99,6 +77,31 @@ function Debug:printTable(node)
   output_str = table.concat(output)
 
   print(self.modName .. ': ' .. output_str)
+end
+
+function Debug:print(...)
+  if not isDebugEnabled() then
+    return
+  end
+  local arguments = { ... }
+  local printResult = ''
+  for _, v in ipairs(arguments) do
+    printResult = printResult .. tostring(v and v or 'nil') .. " "
+  end
+  print('[' .. self.modName .. '] ' .. printResult)
+end
+
+
+---@param modName string
+function Debug:new(modName)
+  local obj = {
+    modName = modName or "DefaultModName",
+    print = Debug.print,
+    printTable = Debug.printTable
+  }
+  setmetatable(obj, self)
+  self.__index = self
+  return obj
 end
 
 
