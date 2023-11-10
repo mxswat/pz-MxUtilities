@@ -308,6 +308,12 @@ end
 ---@param idPrefix string The prefix used to generate the hook id (Prefix_FunctionName)
 ---@param isHooked? boolean defaults to true, set to false for manual hooks toggle
 function Hooks:PostHooksFromTable(originalTable, hooksTable, idPrefix, isHooked)
+  
+  -- Set isHooked to true only if it's nil, not if it's explicitly false
+  if isHooked == nil then
+    isHooked = true
+  end
+
   local function generateId(key)
     return idPrefix .. "_" .. key
   end
