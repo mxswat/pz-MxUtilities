@@ -2,6 +2,10 @@ local Debug = {}
 
 ---@param node table|any
 function Debug:printTable(node)
+  if not isDebugEnabled() then
+    return
+  end
+
   local cache, stack, output = {}, {}, {}
   local depth = 1
   local output_str = "{\n"
