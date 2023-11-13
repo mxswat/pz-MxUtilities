@@ -1,3 +1,5 @@
+-- local DebugUtils = require "MxUtilities/DebugUtils"
+
 local Utils = {}
 
 ---@param table table
@@ -15,7 +17,7 @@ end
 function Utils:mergeWithDefaults(target, defaults)
   if not target then
     -- Return a new table to avoid modifying the input
-    return { table.unpack(defaults) }
+    return { unpack(defaults) }
   end
 
   local result = {}
@@ -30,11 +32,13 @@ end
 ---@param modDataKey string
 ---@param defaults table
 function Utils:getModDataWithDefault(modData, modDataKey, defaults)
-  local target = modData[modDataKey]
-  if not target then
-    modData[modDataKey] = { table.unpack(defaults) }
-    return modData[modDataKey]
-  end
+  local target = modData[modDataKey] or {}
+
+  -- DebugUtils:printTable({
+  --   modData = modData,
+  --   modDataKey = modDataKey,
+  --   defaults = defaults
+  -- })
 
   -- Always return the modified modData[modDataKey]
   modData[modDataKey] = self:mergeWithDefaults(target, defaults)
