@@ -90,7 +90,7 @@ function Debug:print(...)
   local arguments = { ... }
   local printResult = ''
   for _, v in ipairs(arguments) do
-    printResult = printResult .. tostring(v and v or 'nil') .. " "
+    printResult = printResult .. tostring(v) .. " "
   end
   print('[' .. self.modName .. '] ' .. printResult)
 end

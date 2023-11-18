@@ -344,6 +344,9 @@ function Hooks:PostHooksFromTable(originalTable, hooksTable, idPrefix, isHooked)
     end
   end
 
+  --- Detach hooks if via the debug menu I'm reloading the file
+  detachHooks()
+
   if isHooked then
     attachHooks()
   end

@@ -45,4 +45,32 @@ function Utils:getModDataWithDefault(modData, modDataKey, defaults)
   return modData[modDataKey]
 end
 
+---@param font UIFont
+---@param text string
+---@param maxWidth number
+function Utils:trimTextWithEllipsis(font, text, maxWidth)
+  local nameWidth = getTextManager():MeasureStringX(font, text)
+
+  local newName = text
+  if nameWidth > maxWidth then
+    local low = 1
+    local high = string.len(text)
+
+    while low <= high do
+      local mid = math.floor((low + high) / 2)
+      local midWidth = getTextManager():MeasureStringX(font, text:sub(1, mid))
+
+      if midWidth > maxWidth then
+        high = mid - 1
+      else
+        low = mid + 1
+      end
+    end
+
+    newName = text:sub(1, high) .. "..."
+  end
+
+  return newName
+end
+
 return Utils
