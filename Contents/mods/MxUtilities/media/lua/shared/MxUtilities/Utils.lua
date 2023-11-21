@@ -1,4 +1,5 @@
--- local DebugUtils = require "MxUtilities/DebugUtils"
+local Json = require "MxUtilities/Json"
+local DebugUtils = require "MxUtilities/DebugUtils"
 
 local Utils = {}
 
@@ -71,6 +72,46 @@ function Utils:trimTextWithEllipsis(font, text, maxWidth)
   end
 
   return newName
+end
+
+---@param path string The path to where to save the .json file
+---@param tble table
+function Utils:saveTableAsJSONFile(path, tble)
+  local file = getFileWriter(path, true, false);
+
+  file:write(Json.Encode(tble));
+  file:close();
+
+  DebugUtils:print('Wrote to file [', path, ']')
+end
+
+---@param path string The path to where to load the .json file
+---@return table|nil
+function Utils:loadTableFromJSONFile(path)
+  local file = getFileReader(path, false);
+
+  if file == nil then
+    return nil;
+  end
+
+  local content = "";
+  local line = file:readLine();
+  while line ~= nil do
+    content = content .. line;
+    line = file:readLine();
+  end
+
+  file:close();
+
+  DebugUtils:print('read from file [', path, ']')
+
+  return content ~= "" and Json.Decode(content) or nil;
+end
+
+function Utils:getUserID()
+  return isClient()
+      and "player-" .. getWorld():getWorld() .. "-" .. getClientUsername()
+      or "player-" .. getWorld():getWorld();
 end
 
 return Utils
