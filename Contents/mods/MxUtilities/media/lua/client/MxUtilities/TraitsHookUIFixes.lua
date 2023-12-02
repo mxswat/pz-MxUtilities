@@ -1,6 +1,7 @@
 local MxClientEvents = require "MxUtilities/MxClientEvents"
 local DebugUtils = require "MxUtilities/DebugUtils"
 
+-- This ensures that traits are updated when switching between menus
 local function updateTraits()
   DebugUtils:print('TraitsHookUIFixes - updateTraits')
 

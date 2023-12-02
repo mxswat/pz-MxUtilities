@@ -1,8 +1,8 @@
 version=1
+id=3097985524
 title=MxUtilities
-tags=Build 41
-visibility=public
 description=[h1]project-name[/h1]
 description=
 description=Mod under development...
-description=
+tags=Build 41;Framework;Interface;Misc;Multiplayer
+visibility=public
