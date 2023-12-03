@@ -19,14 +19,14 @@ local MxEvents = {
 local old_setSandboxVars = SandboxOptionsScreen.setSandboxVars
 SandboxOptionsScreen.setSandboxVars = function(self)
   old_setSandboxVars(self)
-  triggerEvent('onSetSandboxVars')
+  triggerEvent('onSetSandboxVars', self)
 end
 
 local old_setVisible = CharacterCreationProfession.setVisible
 CharacterCreationProfession.setVisible = function(self, visible, joypadData)
   old_setVisible(self, visible, joypadData)
   if visible then
-    triggerEvent('onCharacterCreationProfessionVisible')
+    triggerEvent('onCharacterCreationProfessionVisible', self)
   end
 end
 
