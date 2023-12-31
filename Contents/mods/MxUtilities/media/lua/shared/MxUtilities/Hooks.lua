@@ -6,6 +6,7 @@
 -- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 local debug = require('MxUtilities/Debug')
+local Utils = require('MxUtilities/Utils')
 local Debug = debug:new('MxUtilities')
 
 -- next() is not avaiable in zomboid
@@ -308,7 +309,6 @@ end
 ---@param idPrefix string The prefix used to generate the hook id (Prefix_FunctionName)
 ---@param isHooked? boolean defaults to true, set to false for manual hooks toggle
 function Hooks:PostHooksFromTable(originalTable, hooksTable, idPrefix, isHooked)
-  
   -- Set isHooked to true only if it's nil, not if it's explicitly false
   if isHooked == nil then
     isHooked = true
@@ -353,6 +353,38 @@ function Hooks:PostHooksFromTable(originalTable, hooksTable, idPrefix, isHooked)
 
 
   return toggleHooks
+end
+
+---@param originalTable table The target class to hook into.
+function Hooks:CreateHookedTable(originalTable)
+  local modId, fileName = Utils:getCurrentModIdAndFileName()
+
+  local function generateId(function_name)
+    return table.concat({ modId, fileName, function_name }, "_")
+  end
+
+  ---@class HookedTable
+  local HookedTable = {}
+
+  function HookedTable:AttachHooks()
+    Debug:print("[Hooks] Attaching Hooks for", modId, fileName)
+    for funcName, func in pairs(self) do
+      if type(func) == "function" and type(originalTable[funcName]) == "function" then
+        Hooks:PostHook(originalTable, funcName, generateId(funcName), func)
+      end
+    end
+  end
+
+  function HookedTable:DetachHooks()
+    for funcName, _ in pairs(self) do
+      if type(self[funcName]) == "function" and type(self[funcName]) == "function" then
+        local id = generateId(funcName)
+        Hooks:RemovePostHook(id)
+      end
+    end
+  end
+
+  return HookedTable
 end
 
 return Hooks

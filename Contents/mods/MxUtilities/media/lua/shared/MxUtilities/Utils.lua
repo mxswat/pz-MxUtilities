@@ -114,4 +114,31 @@ function Utils:getUserID()
       or "player-" .. getWorld():getWorld();
 end
 
+--- It returns the mod id of the file this has been called from
+function Utils:getCurrentModIdAndFileName()
+  local coroutine = getCurrentCoroutine()
+  -- 0 is the first one who called this function :D
+  local o = getCoroutineCallframeStack(coroutine, 0)
+  if not o then
+    return 'NO CoroutineCallframeStack FOUND'
+  end
+
+  local modFileFunctionLine = KahluaUtil.rawTostring2(o)
+  if not modFileFunctionLine then
+    return 'NO modFileFunctionLine FOUND'
+  end
+  DebugUtils:print('modFileFunctionLine', modFileFunctionLine)
+
+  local modId, fileName = modFileFunctionLine:match(".* file: (.-) line # %d+ | MOD: (.*)")
+  if not modId or not fileName then
+    return 'NO modId or fileName FOUND'
+  end
+
+  DebugUtils:print('modId', modId)
+  DebugUtils:print('modId', fileName)
+
+  return modId, fileName
+end
+
+
 return Utils
