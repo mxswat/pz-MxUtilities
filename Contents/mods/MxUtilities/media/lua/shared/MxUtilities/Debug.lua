@@ -87,14 +87,16 @@ function Debug:print(...)
   if not isDebugEnabled() then
     return
   end
-  local arguments = { ... }
+
   local printResult = ''
-  for _, v in ipairs(arguments) do
-    printResult = printResult .. tostring(v) .. " "
+  -- I'm using `select` instead of `ipairs` or `pairs` because I want to print nil values
+  for i = 1, select('#', ...) do
+    local v = select(i, ...)
+    printResult = printResult .. tostring(v) .. ' '
   end
+
   print('[' .. self.modName .. '] ' .. printResult)
 end
-
 
 ---@param modName string
 function Debug:new(modName)
@@ -107,6 +109,5 @@ function Debug:new(modName)
   self.__index = self
   return obj
 end
-
 
 return Debug

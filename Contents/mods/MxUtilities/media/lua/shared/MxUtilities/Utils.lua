@@ -134,9 +134,6 @@ function Utils:getCurrentModIdAndFileName()
     return 'NO modId or fileName FOUND'
   end
 
-  DebugUtils:print('modId', modId)
-  DebugUtils:print('modId', fileName)
-
   return modId, fileName
 end
 
