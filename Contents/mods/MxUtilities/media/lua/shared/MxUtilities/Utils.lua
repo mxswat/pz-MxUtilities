@@ -1,6 +1,7 @@
 local Json = require "MxUtilities/Json"
-local DebugUtils = require "MxUtilities/DebugUtils"
+local MxDebug = require "MxUtilities/MxDebug"
 
+---@class Utils
 local Utils = {}
 
 ---@param table table
@@ -35,7 +36,7 @@ end
 function Utils:getModDataWithDefault(modData, modDataKey, defaults)
   local target = modData[modDataKey] or {}
 
-  -- DebugUtils:printTable({
+  -- MxDebug:printTable({
   --   modData = modData,
   --   modDataKey = modDataKey,
   --   defaults = defaults
@@ -82,7 +83,7 @@ function Utils:saveTableAsJSONFile(path, tble)
   file:write(Json.Encode(tble));
   file:close();
 
-  DebugUtils:print('Wrote to file [', path, ']')
+  MxDebug:print('Wrote to file [', path, ']')
 end
 
 ---@param path string The path to where to load the .json file
@@ -103,7 +104,7 @@ function Utils:loadTableFromJSONFile(path)
 
   file:close();
 
-  DebugUtils:print('read from file [', path, ']')
+  MxDebug:print('read from file [', path, ']')
 
   return content ~= "" and Json.Decode(content) or nil;
 end
@@ -114,28 +115,21 @@ function Utils:getUserID()
       or "player-" .. getWorld():getWorld();
 end
 
---- It returns the mod id of the file this has been called from
-function Utils:getCurrentModIdAndFileName()
-  local coroutine = getCurrentCoroutine()
-  -- 0 is the first one who called this function :D
-  local o = getCoroutineCallframeStack(coroutine, 0)
-  if not o then
-    return 'NO CoroutineCallframeStack FOUND'
+--- To use with the `OnFillWorldObjectContextMenu` event's worldObjects table
+---@param worldObjects table<number, IsoObject>
+---@param customName string
+---@param groupName string
+---@return IsoObject?
+function Utils:findObjectByNameAndGroup(worldObjects, groupName, customName)
+  for _, object in ipairs(worldObjects) do
+    local props = object:getSprite():getProperties()
+    local objCustomName = props and props:Val('CustomName')
+    local objGroupName = props and props:Val('GroupName')
+    MxDebug:print('objCustomName:', objCustomName, 'objGroupName:', objGroupName)
+    if objGroupName == groupName and objCustomName == customName then
+      return object
+    end
   end
-
-  local modFileFunctionLine = KahluaUtil.rawTostring2(o)
-  if not modFileFunctionLine then
-    return 'NO modFileFunctionLine FOUND'
-  end
-  DebugUtils:print('modFileFunctionLine', modFileFunctionLine)
-
-  local modId, fileName = modFileFunctionLine:match(".* file: (.-) line # %d+ | MOD: (.*)")
-  if not modId or not fileName then
-    return 'NO modId or fileName FOUND'
-  end
-
-  return modId, fileName
 end
-
 
 return Utils

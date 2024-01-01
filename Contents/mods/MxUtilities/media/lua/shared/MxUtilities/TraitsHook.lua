@@ -1,4 +1,3 @@
-local DebugUtils = require "MxUtilities/DebugUtils"
 local Hooks = require "MxUtilities/Hooks"
 local TraitsHook = {}
 

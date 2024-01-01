@@ -1,7 +1,7 @@
-local Debug = {}
+local MxDebug = {}
 
 ---@param node table|any
-function Debug:printTable(node)
+function MxDebug:printTable(node)
   if not isDebugEnabled() then
     return
   end
@@ -37,26 +37,26 @@ function Debug:printTable(node)
         end
 
         if (type(v) == "number" or type(v) == "boolean") then
-          output_str = output_str .. string.rep('\t', depth) .. key .. " = " .. tostring(v)
+          output_str = output_str .. string.rep('  ', depth) .. key .. " = " .. tostring(v)
         elseif (type(v) == "table") then
-          output_str = output_str .. string.rep('\t', depth) .. key .. " = {\n"
+          output_str = output_str .. string.rep('  ', depth) .. key .. " = {\n"
           table.insert(stack, node)
           table.insert(stack, v)
           cache[node] = cur_index + 1
           break
         else
-          output_str = output_str .. string.rep('\t', depth) .. key .. " = '" .. tostring(v) .. "'"
+          output_str = output_str .. string.rep('  ', depth) .. key .. " = '" .. tostring(v) .. "'"
         end
 
         if (cur_index == size) then
-          output_str = output_str .. "\n" .. string.rep('\t', depth - 1) .. "}"
+          output_str = output_str .. "\n" .. string.rep('  ', depth - 1) .. "}"
         else
           output_str = output_str .. ","
         end
       else
         -- close the table
         if (cur_index == size) then
-          output_str = output_str .. "\n" .. string.rep('\t', depth - 1) .. "}"
+          output_str = output_str .. "\n" .. string.rep('  ', depth - 1) .. "}"
         end
       end
 
@@ -64,7 +64,7 @@ function Debug:printTable(node)
     end
 
     if (size == 0) then
-      output_str = output_str .. "\n" .. string.rep('\t', depth - 1) .. "}"
+      output_str = output_str .. "\n" .. string.rep('  ', depth - 1) .. "}"
     end
 
     if (#stack > 0) then
@@ -80,10 +80,10 @@ function Debug:printTable(node)
   table.insert(output, output_str)
   output_str = table.concat(output)
 
-  print(self.modName .. ': ' .. output_str)
+  self:print(output_str)
 end
 
-function Debug:print(...)
+function MxDebug:print(...)
   if not isDebugEnabled() then
     return
   end
@@ -95,19 +95,34 @@ function Debug:print(...)
     printResult = printResult .. tostring(v) .. ' '
   end
 
-  print('[' .. self.modName .. '] ' .. printResult)
+  local modId = MxDebug:getCurrentModIdAndFileName()
+  print('[' .. modId .. '] ' .. printResult)
 end
 
----@param modName string
-function Debug:new(modName)
-  local obj = {
-    modName = modName or "DefaultModName",
-    print = Debug.print,
-    printTable = Debug.printTable
-  }
-  setmetatable(obj, self)
-  self.__index = self
-  return obj
+--- It returns the mod id of the file this has been called from
+function MxDebug:getCurrentModIdAndFileName()
+  local coroutine = getCurrentCoroutine()
+  local count = getCallframeTop(coroutine)
+  local lastModId
+  local lastFilename
+  for i = count - 1, 0, -1 do
+    local o = getCoroutineCallframeStack(coroutine, i)
+    if o ~= nil then
+      local modFileFunctionLine = KahluaUtil.rawTostring2(o)
+      if modFileFunctionLine then
+        local fileName, modId = modFileFunctionLine:match(".* file: (.-) line # %d+ | MOD: (.*)")
+        if modId then
+          lastModId = modId
+          lastFilename = fileName
+          if modId ~= "MxUtilities" then
+            break
+          end
+        end
+      end
+    end
+  end
+
+  return tostring(lastModId), tostring(lastFilename)
 end
 
-return Debug
+return MxDebug

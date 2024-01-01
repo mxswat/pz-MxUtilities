@@ -5,9 +5,8 @@
 -- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-local debug = require('MxUtilities/Debug')
-local Utils = require('MxUtilities/Utils')
-local Debug = debug:new('MxUtilities')
+local Utils = require 'MxUtilities/Utils'
+local MxDebug = require 'MxUtilities/MxDebug'
 
 -- next() is not avaiable in zomboid
 local function _next(table)
@@ -243,7 +242,7 @@ end
 
 -- Shared function to log hook errors
 function Hooks:_PrePostHookError(func, id)
-  Debug:print(string.format("[Hooks] Could not hook function '%s' (%s)", tostring(func), tostring(id)))
+  MxDebug:print(string.format("[Hooks] Could not hook function '%s' (%s)", tostring(func), tostring(id)))
 end
 
 -- Helper to create the hooks table structure and function override
@@ -357,7 +356,7 @@ end
 
 ---@param originalTable table The target class to hook into.
 function Hooks:CreateHookedTable(originalTable)
-  local modId, fileName = Utils:getCurrentModIdAndFileName()
+  local modId, fileName = MxDebug:getCurrentModIdAndFileName()
 
   local function generateId(function_name)
     return table.concat({ modId, fileName, function_name }, "_")
@@ -367,7 +366,7 @@ function Hooks:CreateHookedTable(originalTable)
   local HookedTable = {}
 
   function HookedTable:AttachHooks()
-    Debug:print("[Hooks] Attaching Hooks for", modId, fileName)
+    MxDebug:print("[Hooks] Attaching Hooks for", modId, fileName)
     for funcName, func in pairs(self) do
       if type(func) == "function" and type(originalTable[funcName]) == "function" then
         Hooks:PostHook(originalTable, funcName, generateId(funcName), func)
