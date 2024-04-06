@@ -23,7 +23,7 @@ function Utils:mergeWithDefaults(target, defaults)
   end
 
   local result = {}
-  for key, defaultValue in pairs(defaults) do
+  for key, defaultValue in ipairs(defaults) do
     result[key] = target[key] ~= nil and target[key] or defaultValue
   end
 
@@ -54,13 +54,14 @@ function Utils:trimTextWithEllipsis(font, text, maxWidth)
   local nameWidth = getTextManager():MeasureStringX(font, text)
 
   local newName = text
+  local wasTrimmed = false
   if nameWidth > maxWidth then
     local low = 1
     local high = string.len(text)
 
     while low <= high do
       local mid = math.floor((low + high) / 2)
-      local midWidth = getTextManager():MeasureStringX(font, text:sub(1, mid))
+      local midWidth = getTextManager():MeasureStringX(font, text:sub(1, mid) .. "...")
 
       if midWidth > maxWidth then
         high = mid - 1
@@ -70,9 +71,10 @@ function Utils:trimTextWithEllipsis(font, text, maxWidth)
     end
 
     newName = text:sub(1, high) .. "..."
+    wasTrimmed = true
   end
 
-  return newName
+  return newName, wasTrimmed
 end
 
 ---@param path string The path to where to save the .json file

@@ -38,7 +38,7 @@ end
 function Hooks:AddHook(key, id, func)
   self._registered_hooks[key] = self._registered_hooks[key] or {}
   -- Update existing hook
-  for k, v in pairs(self._registered_hooks[key]) do
+  for k, v in ipairs(self._registered_hooks[key]) do
     if v.id == id then
       v.func = func
       return
@@ -77,9 +77,9 @@ end
 ---Removes a hooked function call with the specified id to prevent it from being called
 ---@param id string @Name of the function call to remove
 function Hooks:Remove(id)
-  for k, v in pairs(self._registered_hooks) do
+  for k, v in ipairs(self._registered_hooks) do
     if type(v) == "table" then
-      for x, y in pairs(v) do
+      for x, y in ipairs(v) do
         if y.id == id then
           y = nil
         end
@@ -96,7 +96,7 @@ function Hooks:Call(key, ...)
     return
   end
 
-  for k, v in pairs(self._registered_hooks[key]) do
+  for k, v in ipairs(self._registered_hooks[key]) do
     if v then
       if type(v.func) == "function" then
         v.func(...)
@@ -114,7 +114,7 @@ function Hooks:ReturnCall(key, ...)
     return
   end
 
-  for k, v in pairs(self._registered_hooks[key]) do
+  for k, v in ipairs(self._registered_hooks[key]) do
     if v then
       if type(v.func) == "function" then
         local r = { v.func(...) }
@@ -139,7 +139,7 @@ function Hooks:PreHook(object, func, id, pre_call)
   end
 
   if not self:_ChkCreateTableStructure(object, func) then
-    for k, v in pairs(self._function_hooks[object][func].overrides.pre) do
+    for k, v in ipairs(self._function_hooks[object][func].overrides.pre) do
       if v.id == id then
         return
       end
@@ -156,8 +156,8 @@ end
 ---Removes a prehook and prevents it from being run
 ---@param id string @Name of the prehook to remove
 function Hooks:RemovePreHook(id)
-  for object_i, object in pairs(self._function_hooks) do
-    for func_i, func in pairs(object) do
+  for object_i, object in ipairs(self._function_hooks) do
+    for func_i, func in ipairs(object) do
       for override_i, override in ipairs(func.overrides.pre) do
         if override.id == id then
           table.remove(func.overrides.pre, override_i)
@@ -180,7 +180,7 @@ function Hooks:PostHook(object, func, id, post_call)
   end
 
   if not self:_ChkCreateTableStructure(object, func) then
-    for k, v in pairs(self._function_hooks[object][func].overrides.post) do
+    for k, v in ipairs(self._function_hooks[object][func].overrides.post) do
       if v.id == id then
         return
       end
@@ -197,8 +197,8 @@ end
 ---Removes a posthook and prevents it from being run
 ---@param id string @Name of the posthook to remove
 function Hooks:RemovePostHook(id)
-  for object_i, object in pairs(self._function_hooks) do
-    for func_i, func in pairs(object) do
+  for object_i, object in ipairs(self._function_hooks) do
+    for func_i, func in ipairs(object) do
       for override_i, override in ipairs(func.overrides.post) do
         if override.id == id then
           table.remove(func.overrides.post, override_i)
@@ -318,7 +318,7 @@ function Hooks:PostHooksFromTable(originalTable, hooksTable, idPrefix, isHooked)
   end
 
   local function attachHooks()
-    for funcName, func in pairs(hooksTable) do
+    for funcName, func in ipairs(hooksTable) do
       if type(func) == "function" and type(originalTable[funcName]) == "function" then
         Hooks:PostHook(originalTable, funcName, generateId(funcName), func)
       end
@@ -326,7 +326,7 @@ function Hooks:PostHooksFromTable(originalTable, hooksTable, idPrefix, isHooked)
   end
 
   local function detachHooks()
-    for funcName, _ in pairs(hooksTable) do
+    for funcName, _ in ipairs(hooksTable) do
       if type(hooksTable[funcName]) == "function" and type(hooksTable[funcName]) == "function" then
         local id = generateId(funcName)
         Hooks:RemovePostHook(id)
@@ -367,7 +367,7 @@ function Hooks:CreateHookedTable(originalTable)
 
   function HookedTable:AttachHooks()
     MxDebug:print("[Hooks] Attaching Hooks for", modId, fileName)
-    for funcName, func in pairs(self) do
+    for funcName, func in ipairs(self) do
       if type(func) == "function" and type(originalTable[funcName]) == "function" then
         Hooks:PostHook(originalTable, funcName, generateId(funcName), func)
       end
@@ -375,7 +375,7 @@ function Hooks:CreateHookedTable(originalTable)
   end
 
   function HookedTable:DetachHooks()
-    for funcName, _ in pairs(self) do
+    for funcName, _ in ipairs(self) do
       if type(self[funcName]) == "function" and type(self[funcName]) == "function" then
         local id = generateId(funcName)
         Hooks:RemovePostHook(id)

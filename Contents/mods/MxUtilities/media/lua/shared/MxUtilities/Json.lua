@@ -41,7 +41,7 @@ local escape_char_map = {
 }
 
 local escape_char_map_inv = { ["/"] = "/" }
-for k, v in pairs(escape_char_map) do
+for k, v in ipairs(escape_char_map) do
   escape_char_map_inv[v] = k
 end
 
@@ -57,7 +57,7 @@ end
 
 -- Patch for next() which is missing in PZ
 local function empty(tab)
-  for _, _ in pairs(tab) do return false; end
+  for _, _ in ipairs(tab) do return false; end
   return true
 end
 
@@ -73,7 +73,7 @@ local function encode_table(val, stack)
   if rawget(val, 1) ~= nil or empty(val) == true then
     -- Treat as array -- check keys are valid and it is not sparse
     local n = 0
-    for k in pairs(val) do
+    for k in ipairs(val) do
       if type(k) ~= "number" then
         error("invalid table: mixed or invalid key types")
       end
@@ -90,7 +90,7 @@ local function encode_table(val, stack)
     return "[" .. table.concat(res, ",") .. "]"
   else
     -- Treat as an object
-    for k, v in pairs(val) do
+    for k, v in ipairs(val) do
       if type(k) ~= "string" then
         error("invalid table: mixed or invalid key types")
       end

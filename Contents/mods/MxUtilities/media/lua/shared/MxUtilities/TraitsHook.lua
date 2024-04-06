@@ -2,7 +2,7 @@ local Hooks = require "MxUtilities/Hooks"
 local TraitsHook = {}
 
 local traitMetatable = __classmetatables[Trait.class].__index
-for funcName, originalFunc in pairs(traitMetatable) do
+for funcName, originalFunc in ipairs(traitMetatable) do
   Hooks:_ChkCreateTableStructure(traitMetatable, funcName)
 end
 
