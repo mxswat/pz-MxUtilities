@@ -12,12 +12,12 @@ function MxDebug:printTable(node)
 
   while true do
     local size = 0
-    for k, v in ipairs(node) do
+    for k, v in pairs(node) do
       size = size + 1
     end
 
     local cur_index = 1
-    for k, v in ipairs(node) do
+    for k, v in pairs(node) do
       if (cache[node] == nil) or (cur_index >= cache[node]) then
         if (string.find(output_str, "}", output_str:len())) then
           output_str = output_str .. ",\n"

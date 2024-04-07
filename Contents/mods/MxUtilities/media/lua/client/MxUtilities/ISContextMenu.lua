@@ -7,7 +7,6 @@ require "ISUI/ISContextMenu"
 ---@field onSelectParams table<integer>?
 ---@field onSelect fun(target, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)?
 
----comment
 ---@param params addOptionMxParams
 ---@return any
 function ISContextMenu:addOptionMx(params)
@@ -17,7 +16,6 @@ function ISContextMenu:addOptionMx(params)
   return option
 end
 
----comment
 ---@param addOption addOptionMxParams
 ---@return any, ISContextMenu
 function ISContextMenu:addOptionAndSubMenuMx(addOption)
