@@ -1,7 +1,6 @@
 local MxDebug = require "MxUtilities/MxDebug"
 local Json    = require "MxUtilities/Json"
 ---@param path string The path to where to load the .json file
----@return table|nil
 local function loadTableFromJSONFile(path)
   local file = getFileReader(path, false);
 
@@ -20,7 +19,7 @@ local function loadTableFromJSONFile(path)
 
   MxDebug:print('read from file [', path, ']')
 
-  return content ~= "" and Json.Decode(content) or nil;
+  return content ~= "" and Json:decode(content) or nil;
 end
 
 return loadTableFromJSONFile
